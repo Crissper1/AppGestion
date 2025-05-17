@@ -3188,6 +3188,20 @@ export default function App() {
                         onCreateClient={handleCreateClient}
                       />
                     )}
+                    
+                    {currentTab === 'Recursos' && (
+                      <Resources 
+                        resources={resources} 
+                        onCreateResource={handleCreateResource}
+                      />
+                    )}
+                    
+                    {currentTab === 'Inventario' && (
+                      <Inventory 
+                        inventory={inventory} 
+                        onCreateInventoryItem={handleCreateInventoryItem}
+                      />
+                    )}
                   </>
                 )}
               </div>
