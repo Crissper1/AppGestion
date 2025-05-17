@@ -2655,9 +2655,6 @@ export default function App() {
   const [user, setUser] = useState(null);
   const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') || '');
 
-  // Get the backend URL from environment variables
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
   // Fetch all required data on component mount
   useEffect(() => {
     // Check if user is authenticated from localStorage
