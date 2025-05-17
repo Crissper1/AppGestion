@@ -256,6 +256,54 @@ class DashboardStats(BaseModel):
     work_orders_by_status: Dict[str, int]
 
 
+# Resource Models
+class ResourceBase(BaseModel):
+    name: str
+    type: ResourceType
+    status: ResourceStatus = ResourceStatus.available
+    description: Optional[str] = None
+    identification: Optional[str] = None  # ID, license plate, etc.
+    hourly_cost: Optional[float] = None
+    specialties: Optional[List[str]] = []
+    notes: Optional[str] = None
+
+
+class ResourceCreate(ResourceBase):
+    pass
+
+
+class Resource(ResourceBase, BaseDBModel):
+    assigned_work_orders: List[str] = []  # List of work order IDs
+    current_location: Optional[str] = None
+    availability_schedule: Optional[Dict[str, Any]] = None
+    last_maintenance_date: Optional[datetime] = None
+    next_maintenance_date: Optional[datetime] = None
+
+
+# Inventory Models
+class InventoryItemBase(BaseModel):
+    name: str
+    category: InventoryCategory
+    description: Optional[str] = None
+    unit: str = "unidad"  # unit, kg, m, etc.
+    unit_cost: float
+    minimum_stock: Optional[int] = None
+    current_stock: int = 0
+    location: Optional[str] = None
+    supplier_id: Optional[str] = None
+    image_url: Optional[str] = None
+
+
+class InventoryItemCreate(InventoryItemBase):
+    pass
+
+
+class InventoryItem(InventoryItemBase, BaseDBModel):
+    last_restock_date: Optional[datetime] = None
+    last_use_date: Optional[datetime] = None
+    stock_movement_history: List[Dict[str, Any]] = []
+
+
 # API Routes for Clients
 @api_router.post("/clients", response_model=Client)
 async def create_client(client: ClientCreate):
