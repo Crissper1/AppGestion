@@ -137,6 +137,36 @@ class BaseDBModel(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
 
+# User Models
+class UserBase(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: str
+    role: UserRole = UserRole.technician
+    is_active: bool = True
+
+
+class UserCreate(UserBase):
+    password: str
+
+
+class User(UserBase, BaseDBModel):
+    pass
+
+
+class UserInDB(User):
+    hashed_password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    username: Optional[str] = None
+
+
 # Client Models
 class ClientBase(BaseModel):
     name: str
