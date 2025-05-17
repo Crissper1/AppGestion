@@ -2945,6 +2945,20 @@ export default function App() {
       ) : (
         <>
           <Transition.Root show={sidebarOpen} as={Fragment}>
+        showRegister ? (
+          <Register 
+            onRegister={handleRegister} 
+            onCancelRegister={() => setShowRegister(false)} 
+          />
+        ) : (
+          <Login 
+            onLogin={handleLogin} 
+            onShowRegister={() => setShowRegister(true)} 
+          />
+        )
+      ) : (
+        <>
+          <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
           <Transition.Child
             as={Fragment}
