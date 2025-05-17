@@ -2603,49 +2603,6 @@ export default function App() {
   const [workOrders, setWorkOrders] = useState([]);
   const [invoices, setInvoices] = useState([]);
   const [resources, setResources] = useState([]);
-
-  // Get the backend URL from environment variables
-  const backendUrl = process.env.REACT_APP_BACKEND_URL;
-
-  // Create a new resource
-  const handleCreateResource = async (resourceData) => {
-    try {
-      const response = await fetch(`${backendUrl}/api/resources`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(resourceData),
-      });
-      
-      if (response.ok) {
-        const newResource = await response.json();
-        setResources(prevResources => [...prevResources, newResource]);
-      }
-    } catch (error) {
-      console.error('Error creating resource:', error);
-    }
-  };
-
-  // Create a new inventory item
-  const handleCreateInventoryItem = async (itemData) => {
-    try {
-      const response = await fetch(`${backendUrl}/api/inventory`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(itemData),
-      });
-      
-      if (response.ok) {
-        const newItem = await response.json();
-        setInventory(prevInventory => [...prevInventory, newItem]);
-      }
-    } catch (error) {
-      console.error('Error creating inventory item:', error);
-    }
-  };
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   
@@ -2654,6 +2611,9 @@ export default function App() {
   const [showRegister, setShowRegister] = useState(false);
   const [user, setUser] = useState(null);
   const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') || '');
+
+  // Get the backend URL from environment variables
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
   // Fetch all required data on component mount
   useEffect(() => {
