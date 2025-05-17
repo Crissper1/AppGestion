@@ -2953,11 +2953,6 @@ export default function App() {
       ) : (
         <>
           <Transition.Root show={sidebarOpen} as={Fragment}>
-        showRegister ? (
-          <Register 
-            onRegister={handleRegister} 
-            onCancelRegister={() => setShowRegister(false)} 
-          />
         ) : (
           <Login 
             onLogin={handleLogin} 
