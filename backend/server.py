@@ -547,6 +547,196 @@ async def health_check():
     return {"status": "ok", "timestamp": datetime.utcnow()}
 
 
+# Authentication API Routes
+@api_router.post("/auth/token", response_model=Token)
+async def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = await db.users.find_one({"username": form_data.username})
+    if not user or not verify_password(form_data.password, user.get("hashed_password", "")):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": user["username"]}, expires_delta=access_token_expires
+    )
+    return {"access_token": access_token, "token_type": "bearer"}
+
+
+@api_router.post("/auth/register", response_model=User)
+async def register_user(user: UserCreate):
+    # Check if username already exists
+    existing_user = await db.users.find_one({"username": user.username})
+    if existing_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Username already registered"
+        )
+    
+    # Check if email already exists
+    existing_email = await db.users.find_one({"email": user.email})
+    if existing_email:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered"
+        )
+    
+    # Create new user with hashed password
+    hashed_password = get_password_hash(user.password)
+    user_data = user.model_dump()
+    del user_data["password"]
+    
+    user_in_db = UserInDB(
+        **user_data,
+        hashed_password=hashed_password,
+        id=str(uuid.uuid4()),
+        created_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    
+    await db.users.insert_one(user_in_db.model_dump())
+    
+    # Return the user without the hashed password
+    return User(**user_data, id=user_in_db.id, created_at=user_in_db.created_at, updated_at=user_in_db.updated_at)
+
+
+@api_router.get("/auth/me", response_model=User)
+async def read_users_me(current_user: dict = Depends(get_current_user)):
+    return User(**current_user)
+
+
+# Resource API Routes
+@api_router.post("/resources", response_model=Resource)
+async def create_resource(resource: ResourceCreate):
+    resource_dict = resource.model_dump()
+    resource_obj = Resource(**resource_dict)
+    resource_data = resource_obj.model_dump()
+    result = await db.resources.insert_one(resource_data)
+    return resource_obj
+
+
+@api_router.get("/resources", response_model=List[Resource])
+async def get_resources(
+    type: Optional[ResourceType] = None,
+    status: Optional[ResourceStatus] = None
+):
+    filter_query = {}
+    if type:
+        filter_query["type"] = type
+    if status:
+        filter_query["status"] = status
+    
+    resources = await db.resources.find(filter_query).to_list(1000)
+    return [Resource(**resource) for resource in resources]
+
+
+@api_router.get("/resources/{resource_id}", response_model=Resource)
+async def get_resource(resource_id: str):
+    resource = await db.resources.find_one({"id": resource_id})
+    if resource:
+        return Resource(**resource)
+    raise HTTPException(status_code=404, detail="Resource not found")
+
+
+@api_router.put("/resources/{resource_id}", response_model=Resource)
+async def update_resource(resource_id: str, resource_update: dict = Body(...)):
+    resource_update["updated_at"] = datetime.utcnow()
+    
+    result = await db.resources.update_one(
+        {"id": resource_id},
+        {"$set": resource_update}
+    )
+    
+    if result.modified_count:
+        updated_resource = await db.resources.find_one({"id": resource_id})
+        return Resource(**updated_resource)
+    
+    raise HTTPException(status_code=404, detail="Resource not found")
+
+
+# Inventory API Routes
+@api_router.post("/inventory", response_model=InventoryItem)
+async def create_inventory_item(item: InventoryItemCreate):
+    item_dict = item.model_dump()
+    item_obj = InventoryItem(**item_dict)
+    item_data = item_obj.model_dump()
+    result = await db.inventory.insert_one(item_data)
+    return item_obj
+
+
+@api_router.get("/inventory", response_model=List[InventoryItem])
+async def get_inventory_items(
+    category: Optional[InventoryCategory] = None,
+    low_stock: Optional[bool] = None
+):
+    filter_query = {}
+    if category:
+        filter_query["category"] = category
+    
+    # Add low stock filter if requested
+    if low_stock:
+        filter_query["$expr"] = {
+            "$lte": ["$current_stock", {"$ifNull": ["$minimum_stock", 0]}]
+        }
+    
+    items = await db.inventory.find(filter_query).to_list(1000)
+    return [InventoryItem(**item) for item in items]
+
+
+@api_router.get("/inventory/{item_id}", response_model=InventoryItem)
+async def get_inventory_item(item_id: str):
+    item = await db.inventory.find_one({"id": item_id})
+    if item:
+        return InventoryItem(**item)
+    raise HTTPException(status_code=404, detail="Inventory item not found")
+
+
+@api_router.put("/inventory/{item_id}", response_model=InventoryItem)
+async def update_inventory_item(item_id: str, item_update: dict = Body(...)):
+    item_update["updated_at"] = datetime.utcnow()
+    
+    # If stock is being updated, add to movement history
+    if "current_stock" in item_update:
+        current_item = await db.inventory.find_one({"id": item_id})
+        if current_item:
+            old_stock = current_item.get("current_stock", 0)
+            new_stock = item_update["current_stock"]
+            change = new_stock - old_stock
+            
+            movement = {
+                "date": datetime.utcnow(),
+                "previous_stock": old_stock,
+                "new_stock": new_stock,
+                "change": change,
+                "reason": item_update.get("movement_reason", "Manual update")
+            }
+            
+            await db.inventory.update_one(
+                {"id": item_id},
+                {"$push": {"stock_movement_history": movement}}
+            )
+            
+            # Update last_restock_date if stock increased
+            if change > 0:
+                item_update["last_restock_date"] = datetime.utcnow()
+            # Update last_use_date if stock decreased
+            elif change < 0:
+                item_update["last_use_date"] = datetime.utcnow()
+    
+    result = await db.inventory.update_one(
+        {"id": item_id},
+        {"$set": item_update}
+    )
+    
+    if result.modified_count:
+        updated_item = await db.inventory.find_one({"id": item_id})
+        return InventoryItem(**updated_item)
+    
+    raise HTTPException(status_code=404, detail="Inventory item not found")
+
+
 # Include the router in the main app
 app.include_router(api_router)
 
