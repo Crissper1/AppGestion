@@ -2602,7 +2602,15 @@ export default function App() {
   const [clients, setClients] = useState([]);
   const [workOrders, setWorkOrders] = useState([]);
   const [invoices, setInvoices] = useState([]);
+  const [resources, setResources] = useState([]);
+  const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
+  
+  // Authentication states
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [showRegister, setShowRegister] = useState(false);
+  const [user, setUser] = useState(null);
+  const [authToken, setAuthToken] = useState(localStorage.getItem('authToken') || '');
 
   // Get the backend URL from environment variables
   const backendUrl = process.env.REACT_APP_BACKEND_URL;
