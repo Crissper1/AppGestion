@@ -125,6 +125,18 @@ class WorkManagementAPITester:
         self.test_results["get_inventory"] = success
         return success, response
         
+    def test_create_inventory_item(self, item_data):
+        """Test creating an inventory item"""
+        success, response = self.run_test(
+            "Create Inventory Item",
+            "POST",
+            "api/inventory",
+            200,
+            data=item_data
+        )
+        self.test_results["create_inventory_item"] = success
+        return success, response
+        
     def test_health_check(self):
         """Test API health check endpoint"""
         success, response = self.run_test(
