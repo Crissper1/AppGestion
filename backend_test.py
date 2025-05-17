@@ -180,6 +180,17 @@ class WorkManagementAPITester:
         )
         self.test_results["get_invoices"] = success
         return success, response
+        
+    def test_health_check(self):
+        """Test API health check endpoint"""
+        success, response = self.run_test(
+            "API Health Check",
+            "GET",
+            "api/health",
+            200
+        )
+        self.test_results["health_check"] = success
+        return success
 
 def main():
     # Setup
