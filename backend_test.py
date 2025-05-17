@@ -53,24 +53,43 @@ class WorkManagementAPITester:
 
     def test_login(self, username="admin", password="admin123"):
         """Test login endpoint"""
+        # For OAuth2PasswordRequestForm, we need to use form data instead of JSON
         data = {
             "username": username,
             "password": password
         }
-        success, response = self.run_test(
-            "Login",
-            "POST",
-            "api/auth/token",
-            200,
-            data=data
-        )
         
-        if success and response and "access_token" in response:
-            self.token = response["access_token"]
-            print(f"✅ Successfully obtained authentication token")
-        else:
-            print(f"❌ Failed to obtain authentication token")
+        url = f"{self.base_url}/api/auth/token"
+        headers = {'Content-Type': 'application/x-www-form-urlencoded'}
         
+        self.tests_run += 1
+        print(f"\n🔍 Testing Login...")
+        
+        try:
+            # Use requests.post with data parameter (not json) for form data
+            response = requests.post(url, data=data, headers=headers)
+            
+            success = response.status_code == 200
+            if success:
+                self.tests_passed += 1
+                print(f"✅ Passed - Status: {response.status_code}")
+                result = response.json()
+                print(f"Response: {json.dumps(result, indent=2, default=str)[:500]}...")
+                
+                if "access_token" in result:
+                    self.token = result["access_token"]
+                    print(f"✅ Successfully obtained authentication token")
+                else:
+                    print(f"❌ Token not found in response")
+                    success = False
+            else:
+                print(f"❌ Failed - Expected 200, got {response.status_code}")
+                print(f"Response: {response.text[:500]}...")
+        
+        except Exception as e:
+            print(f"❌ Failed - Error: {str(e)}")
+            success = False
+            
         self.test_results["login"] = success
         return success
 
