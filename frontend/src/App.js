@@ -2720,6 +2720,83 @@ export default function App() {
     }
   }, [backendUrl, isAuthenticated]);
 
+  // Handle login
+  const handleLogin = async (credentials) => {
+    try {
+      const formData = new URLSearchParams();
+      formData.append('username', credentials.username);
+      formData.append('password', credentials.password);
+      
+      const response = await fetch(`${backendUrl}/api/auth/token`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: formData,
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setAuthToken(data.access_token);
+        localStorage.setItem('authToken', data.access_token);
+        setIsAuthenticated(true);
+        
+        // Fetch user data
+        const userResponse = await fetch(`${backendUrl}/api/auth/me`, {
+          headers: {
+            'Authorization': `Bearer ${data.access_token}`
+          }
+        });
+        
+        if (userResponse.ok) {
+          const userData = await userResponse.json();
+          setUser(userData);
+        }
+      } else {
+        throw new Error('Credenciales incorrectas');
+      }
+    } catch (error) {
+      console.error('Error en inicio de sesión:', error);
+      throw error;
+    }
+  };
+  
+  // Handle registration
+  const handleRegister = async (userData) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/auth/register`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setShowRegister(false);
+        // Auto login after registration
+        await handleLogin({
+          username: userData.username,
+          password: userData.password
+        });
+      } else {
+        throw new Error('Error en el registro');
+      }
+    } catch (error) {
+      console.error('Error en registro:', error);
+      throw error;
+    }
+  };
+  
+  // Handle logout
+  const handleLogout = () => {
+    setAuthToken('');
+    setUser(null);
+    setIsAuthenticated(false);
+    localStorage.removeItem('authToken');
+  };
+
   // Create a new client
   const handleCreateClient = async (clientData) => {
     try {
