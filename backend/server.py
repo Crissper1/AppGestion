@@ -112,8 +112,8 @@ class InvoiceItem(BaseModel):
 
 class InvoiceBase(BaseModel):
     client_id: str
-    issue_date: date = Field(default_factory=date.today)
-    due_date: Optional[date] = None
+    issue_date: datetime = Field(default_factory=datetime.utcnow)
+    due_date: Optional[datetime] = None
     invoice_type: InvoiceType = InvoiceType.e_ticket
     work_order_ids: List[str] = []
     items: List[InvoiceItem]
