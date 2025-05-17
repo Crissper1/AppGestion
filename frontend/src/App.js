@@ -1528,9 +1528,10 @@ export default function App() {
         }
         
         // Fetch clients
+        let clientsData = []; // Define clientsData outside the if block
         const clientsResponse = await fetch(`${backendUrl}/api/clients`);
         if (clientsResponse.ok) {
-          const clientsData = await clientsResponse.json();
+          clientsData = await clientsResponse.json();
           setClients(clientsData);
         }
         
@@ -1540,11 +1541,10 @@ export default function App() {
           const workOrdersData = await workOrdersResponse.json();
           
           // Enhance work orders with client names
-          const clientsMap = clientsData ? 
-            clientsData.reduce((map, client) => {
-              map[client.id] = client.name;
-              return map;
-            }, {}) : {};
+          const clientsMap = clientsData.reduce((map, client) => {
+            map[client.id] = client.name;
+            return map;
+          }, {});
           
           const enhancedWorkOrders = workOrdersData.map(wo => ({
             ...wo,
