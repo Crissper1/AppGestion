@@ -2617,6 +2617,37 @@ export default function App() {
 
   // Fetch all required data on component mount
   useEffect(() => {
+    // Check if user is authenticated from localStorage
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setAuthToken(token);
+      setIsAuthenticated(true);
+      
+      // Get user data if token exists
+      const fetchUserData = async () => {
+        try {
+          const response = await fetch(`${backendUrl}/api/auth/me`, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (response.ok) {
+            const userData = await response.json();
+            setUser(userData);
+          } else {
+            // Token invalid or expired
+            handleLogout();
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+          handleLogout();
+        }
+      };
+      
+      fetchUserData();
+    }
+    
     const fetchData = async () => {
       try {
         setLoading(true);
@@ -2661,6 +2692,20 @@ export default function App() {
           const invoicesData = await invoicesResponse.json();
           setInvoices(invoicesData);
         }
+        
+        // Fetch resources
+        const resourcesResponse = await fetch(`${backendUrl}/api/resources`);
+        if (resourcesResponse.ok) {
+          const resourcesData = await resourcesResponse.json();
+          setResources(resourcesData);
+        }
+        
+        // Fetch inventory
+        const inventoryResponse = await fetch(`${backendUrl}/api/inventory`);
+        if (inventoryResponse.ok) {
+          const inventoryData = await inventoryResponse.json();
+          setInventory(inventoryData);
+        }
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -2668,8 +2713,12 @@ export default function App() {
       }
     };
     
-    fetchData();
-  }, [backendUrl]);
+    if (isAuthenticated) {
+      fetchData();
+    } else {
+      setLoading(false);
+    }
+  }, [backendUrl, isAuthenticated]);
 
   // Create a new client
   const handleCreateClient = async (clientData) => {
