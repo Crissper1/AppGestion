@@ -1493,6 +1493,1099 @@ function Clients({ clients, onCreateClient }) {
   );
 }
 
+// Resource Form Component
+function ResourceForm({ onSubmit }) {
+  const [resource, setResource] = useState({
+    name: '',
+    type: 'personnel',
+    status: 'available',
+    description: '',
+    identification: '',
+    hourly_cost: 0,
+    specialties: '',
+    notes: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setResource(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSpecialtiesChange = (e) => {
+    const specialtiesString = e.target.value;
+    setResource(prev => ({ 
+      ...prev, 
+      specialties: specialtiesString.split(',').map(s => s.trim()).filter(Boolean)
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({
+      ...resource,
+      hourly_cost: parseFloat(resource.hourly_cost)
+    });
+  };
+
+  return (
+    <div className="bg-white shadow sm:rounded-lg p-6">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nuevo Recurso</h3>
+      
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Nombre
+            </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              value={resource.name}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+              Tipo
+            </label>
+            <select
+              id="type"
+              name="type"
+              required
+              value={resource.type}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="personnel">Personal</option>
+              <option value="vehicle">Vehículo</option>
+              <option value="equipment">Equipo</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+              Estado
+            </label>
+            <select
+              id="status"
+              name="status"
+              value={resource.status}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="available">Disponible</option>
+              <option value="assigned">Asignado</option>
+              <option value="maintenance">En mantenimiento</option>
+              <option value="unavailable">No disponible</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="identification" className="block text-sm font-medium text-gray-700">
+              Identificación
+            </label>
+            <input
+              type="text"
+              name="identification"
+              id="identification"
+              value={resource.identification}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              placeholder={resource.type === 'personnel' ? 'Cédula/ID' : 
+                         resource.type === 'vehicle' ? 'Placa/Matrícula' : 'Número de Serie'}
+            />
+          </div>
+
+          <div>
+            <label htmlFor="hourly_cost" className="block text-sm font-medium text-gray-700">
+              Costo por Hora (UYU)
+            </label>
+            <input
+              type="number"
+              name="hourly_cost"
+              id="hourly_cost"
+              min="0"
+              step="0.01"
+              value={resource.hourly_cost}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="specialties" className="block text-sm font-medium text-gray-700">
+              Especialidades
+            </label>
+            <input
+              type="text"
+              name="specialties"
+              id="specialties"
+              value={resource.specialties}
+              onChange={handleChange}
+              placeholder="Separadas por comas"
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              Descripción
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows={2}
+              value={resource.description}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+              Notas
+            </label>
+            <textarea
+              id="notes"
+              name="notes"
+              rows={2}
+              value={resource.notes}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <button
+            type="submit"
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Crear Recurso
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// Resources Component
+function Resources({ resources, onCreateResource }) {
+  const [showForm, setShowForm] = useState(false);
+  const [filteredResources, setFilteredResources] = useState(resources);
+  const [filter, setFilter] = useState({
+    type: '',
+    status: '',
+  });
+
+  useEffect(() => {
+    // Apply filters
+    let filtered = [...resources];
+    
+    if (filter.type) {
+      filtered = filtered.filter(resource => resource.type === filter.type);
+    }
+    
+    if (filter.status) {
+      filtered = filtered.filter(resource => resource.status === filter.status);
+    }
+    
+    setFilteredResources(filtered);
+  }, [resources, filter]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleCreateResource = (resourceData) => {
+    onCreateResource(resourceData);
+    setShowForm(false);
+  };
+
+  const getResourceTypeLabel = (type) => {
+    switch(type) {
+      case 'personnel': return 'Personal';
+      case 'vehicle': return 'Vehículo';
+      case 'equipment': return 'Equipo';
+      default: return type;
+    }
+  };
+
+  const getResourceStatusLabel = (status) => {
+    switch(status) {
+      case 'available': return 'Disponible';
+      case 'assigned': return 'Asignado';
+      case 'maintenance': return 'En mantenimiento';
+      case 'unavailable': return 'No disponible';
+      default: return status;
+    }
+  };
+
+  const getStatusColor = (status) => {
+    switch(status) {
+      case 'available': return 'bg-green-100 text-green-800';
+      case 'assigned': return 'bg-blue-100 text-blue-800';
+      case 'maintenance': return 'bg-yellow-100 text-yellow-800';
+      case 'unavailable': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  const getTypeIcon = (type) => {
+    switch(type) {
+      case 'personnel':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+          </svg>
+        );
+      case 'vehicle':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+            <path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+            <path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1v-1h3.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-5a1 1 0 00-.293-.707l-3-3A1 1 0 0016 4H3z" />
+          </svg>
+        );
+      case 'equipment':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clipRule="evenodd" />
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="resources-page">
+      <div className="header-section">
+        <div className="header-image-container">
+          <img
+            src="https://images.unsplash.com/photo-1577896021507-78957e4b77d2"
+            alt="Resources"
+            className="header-image"
+          />
+          <div className="header-overlay"></div>
+          <div className="header-content">
+            <h1 className="text-2xl font-bold text-white">Gestión de Recursos</h1>
+            <p className="text-white text-opacity-80">Administra personal, vehículos y equipos</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="controls-section">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <select
+              name="type"
+              value={filter.type}
+              onChange={handleFilterChange}
+              className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="">Todos los tipos</option>
+              <option value="personnel">Personal</option>
+              <option value="vehicle">Vehículos</option>
+              <option value="equipment">Equipos</option>
+            </select>
+            
+            <select
+              name="status"
+              value={filter.status}
+              onChange={handleFilterChange}
+              className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="">Todos los estados</option>
+              <option value="available">Disponibles</option>
+              <option value="assigned">Asignados</option>
+              <option value="maintenance">En mantenimiento</option>
+              <option value="unavailable">No disponibles</option>
+            </select>
+          </div>
+          
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            {showForm ? 'Cancelar' : 'Nuevo Recurso'}
+          </button>
+        </div>
+
+        {showForm && (
+          <ResourceForm onSubmit={handleCreateResource} />
+        )}
+      </div>
+
+      <div className="resources-grid mt-6">
+        {filteredResources.map((resource) => (
+          <div key={resource.id} className="resource-card">
+            <div className="flex justify-between items-start">
+              <div className="flex items-center">
+                <div className="mr-3">
+                  {getTypeIcon(resource.type)}
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">{resource.name}</h3>
+                  <p className="text-sm text-gray-500">{getResourceTypeLabel(resource.type)}</p>
+                </div>
+              </div>
+              <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(resource.status)}`}>
+                {getResourceStatusLabel(resource.status)}
+              </span>
+            </div>
+            
+            {resource.identification && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">
+                  <span className="font-medium">ID:</span> {resource.identification}
+                </p>
+              </div>
+            )}
+            
+            {resource.description && (
+              <div className="mt-2">
+                <p className="text-sm text-gray-600">{resource.description}</p>
+              </div>
+            )}
+            
+            <div className="mt-4 border-t border-gray-200 pt-4">
+              {resource.hourly_cost > 0 && (
+                <p className="text-sm text-gray-500">
+                  <span className="font-medium">Costo/Hora:</span> ${resource.hourly_cost.toFixed(2)} UYU
+                </p>
+              )}
+              
+              {resource.specialties && resource.specialties.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-sm text-gray-500 font-medium mb-1">Especialidades:</p>
+                  <div className="flex flex-wrap gap-1">
+                    {resource.specialties.map((specialty, index) => (
+                      <span key={index} className="px-2 py-1 bg-gray-100 text-xs rounded-full text-gray-800">
+                        {specialty}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {resource.notes && (
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <p className="text-sm text-gray-500">
+                  <span className="font-medium">Notas:</span> {resource.notes}
+                </p>
+              </div>
+            )}
+          </div>
+        ))}
+        
+        {filteredResources.length === 0 && (
+          <div className="col-span-full p-6 text-center text-gray-500 bg-white rounded-lg shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">No hay recursos</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              No se encontraron recursos que coincidan con los filtros seleccionados.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Inventory Form Component
+function InventoryForm({ onSubmit }) {
+  const [item, setItem] = useState({
+    name: '',
+    category: 'material',
+    description: '',
+    unit: 'unidad',
+    unit_cost: 0,
+    minimum_stock: 0,
+    current_stock: 0,
+    location: '',
+    supplier_id: '',
+    image_url: ''
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setItem(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    onSubmit({
+      ...item,
+      unit_cost: parseFloat(item.unit_cost),
+      minimum_stock: parseInt(item.minimum_stock),
+      current_stock: parseInt(item.current_stock)
+    });
+  };
+
+  return (
+    <div className="bg-white shadow sm:rounded-lg p-6">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nuevo Ítem de Inventario</h3>
+      
+      <form onSubmit={handleSubmit}>
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+              Nombre
+            </label>
+            <input
+              type="text"
+              name="name"
+              id="name"
+              required
+              value={item.name}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+              Categoría
+            </label>
+            <select
+              id="category"
+              name="category"
+              required
+              value={item.category}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="material">Material</option>
+              <option value="tool">Herramienta</option>
+              <option value="spare_part">Repuesto</option>
+              <option value="consumable">Consumible</option>
+            </select>
+          </div>
+
+          <div>
+            <label htmlFor="unit" className="block text-sm font-medium text-gray-700">
+              Unidad de Medida
+            </label>
+            <input
+              type="text"
+              name="unit"
+              id="unit"
+              required
+              value={item.unit}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="unit_cost" className="block text-sm font-medium text-gray-700">
+              Costo Unitario (UYU)
+            </label>
+            <input
+              type="number"
+              name="unit_cost"
+              id="unit_cost"
+              min="0"
+              step="0.01"
+              required
+              value={item.unit_cost}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="current_stock" className="block text-sm font-medium text-gray-700">
+              Stock Actual
+            </label>
+            <input
+              type="number"
+              name="current_stock"
+              id="current_stock"
+              min="0"
+              required
+              value={item.current_stock}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="minimum_stock" className="block text-sm font-medium text-gray-700">
+              Stock Mínimo
+            </label>
+            <input
+              type="number"
+              name="minimum_stock"
+              id="minimum_stock"
+              min="0"
+              value={item.minimum_stock}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+              Ubicación
+            </label>
+            <input
+              type="text"
+              name="location"
+              id="location"
+              value={item.location}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="supplier_id" className="block text-sm font-medium text-gray-700">
+              Proveedor
+            </label>
+            <input
+              type="text"
+              name="supplier_id"
+              id="supplier_id"
+              value={item.supplier_id}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+              Descripción
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              rows={2}
+              value={item.description}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
+              URL de Imagen (opcional)
+            </label>
+            <input
+              type="text"
+              name="image_url"
+              id="image_url"
+              value={item.image_url}
+              onChange={handleChange}
+              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            />
+          </div>
+        </div>
+
+        <div className="mt-6">
+          <button
+            type="submit"
+            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Crear Ítem
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+// Inventory Component
+function Inventory({ inventory, onCreateInventoryItem }) {
+  const [showForm, setShowForm] = useState(false);
+  const [filteredItems, setFilteredItems] = useState(inventory);
+  const [filter, setFilter] = useState({
+    category: '',
+    lowStock: false,
+  });
+
+  useEffect(() => {
+    // Apply filters
+    let filtered = [...inventory];
+    
+    if (filter.category) {
+      filtered = filtered.filter(item => item.category === filter.category);
+    }
+    
+    if (filter.lowStock) {
+      filtered = filtered.filter(item => item.current_stock <= item.minimum_stock);
+    }
+    
+    setFilteredItems(filtered);
+  }, [inventory, filter]);
+
+  const handleFilterChange = (e) => {
+    const { name, value } = e.target;
+    setFilter(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleLowStockChange = (e) => {
+    setFilter(prev => ({ ...prev, lowStock: e.target.checked }));
+  };
+
+  const handleCreateItem = (itemData) => {
+    onCreateInventoryItem(itemData);
+    setShowForm(false);
+  };
+
+  const getCategoryLabel = (category) => {
+    switch(category) {
+      case 'material': return 'Material';
+      case 'tool': return 'Herramienta';
+      case 'spare_part': return 'Repuesto';
+      case 'consumable': return 'Consumible';
+      default: return category;
+    }
+  };
+
+  const getCategoryIcon = (category) => {
+    switch(category) {
+      case 'material':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M7 2a1 1 0 00-.707 1.707L7 4.414v3.758a1 1 0 01-.293.707l-4 4C.817 14.769 2.156 18 4.828 18h10.343c2.673 0 4.012-3.231 2.122-5.121l-4-4A1 1 0 0113 8.172V4.414l.707-.707A1 1 0 0013 2H7zm2 6.172V4h2v4.172a3 3 0 00.879 2.12l1.027 1.028a4 4 0 00-2.171.102l-.47.156a4 4 0 01-2.53 0l-.563-.187a1.993 1.993 0 00-.114-.035l1.063-1.063A3 3 0 009 8.172z" clipRule="evenodd" />
+          </svg>
+        );
+      case 'tool':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-green-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M6 6V5a3 3 0 013-3h2a3 3 0 013 3v1h2a2 2 0 012 2v3.57A22.952 22.952 0 0110 13a22.95 22.95 0 01-8-1.43V8a2 2 0 012-2h2zm2-1a1 1 0 011-1h2a1 1 0 011 1v1H8V5zm1 5a1 1 0 011-1h.01a1 1 0 110 2H10a1 1 0 01-1-1z" clipRule="evenodd" />
+            <path d="M2 13.692V16a2 2 0 002 2h12a2 2 0 002-2v-2.308A24.974 24.974 0 0110 15c-2.796 0-5.487-.46-8-1.308z" />
+          </svg>
+        );
+      case 'spare_part':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-orange-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+          </svg>
+        );
+      case 'consumable':
+        return (
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd" />
+            <path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z" />
+          </svg>
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="inventory-page">
+      <div className="header-section">
+        <div className="header-image-container">
+          <img
+            src="https://images.unsplash.com/photo-1620388640785-892616248ec8"
+            alt="Inventory"
+            className="header-image"
+          />
+          <div className="header-overlay"></div>
+          <div className="header-content">
+            <h1 className="text-2xl font-bold text-white">Gestión de Inventario</h1>
+            <p className="text-white text-opacity-80">Administra materiales, herramientas y repuestos</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="controls-section">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <select
+              name="category"
+              value={filter.category}
+              onChange={handleFilterChange}
+              className="rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+            >
+              <option value="">Todas las categorías</option>
+              <option value="material">Materiales</option>
+              <option value="tool">Herramientas</option>
+              <option value="spare_part">Repuestos</option>
+              <option value="consumable">Consumibles</option>
+            </select>
+            
+            <div className="flex items-center">
+              <input
+                id="lowStock"
+                name="lowStock"
+                type="checkbox"
+                checked={filter.lowStock}
+                onChange={handleLowStockChange}
+                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="lowStock" className="ml-2 block text-sm text-gray-900">
+                Stock bajo
+              </label>
+            </div>
+          </div>
+          
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="inline-flex items-center justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            {showForm ? 'Cancelar' : 'Nuevo Ítem'}
+          </button>
+        </div>
+
+        {showForm && (
+          <InventoryForm onSubmit={handleCreateItem} />
+        )}
+      </div>
+
+      <div className="inventory-grid mt-6">
+        {filteredItems.map((item) => (
+          <div key={item.id} className="inventory-card">
+            <div className="flex justify-between">
+              <div className="flex items-center">
+                <div className="mr-3">
+                  {getCategoryIcon(item.category)}
+                </div>
+                <div>
+                  <h3 className="text-lg font-medium text-gray-900">{item.name}</h3>
+                  <p className="text-sm text-gray-500">{getCategoryLabel(item.category)}</p>
+                </div>
+              </div>
+              
+              <div className="text-right">
+                <p className="text-lg font-bold text-gray-900">${item.unit_cost.toFixed(2)}</p>
+                <p className="text-xs text-gray-500">por {item.unit}</p>
+              </div>
+            </div>
+            
+            <div className="mt-4 flex justify-between items-center">
+              <div>
+                <p className="text-sm text-gray-600 font-medium">Stock actual:</p>
+                <div className="flex items-center">
+                  <span className={`text-lg font-bold ${item.current_stock <= item.minimum_stock ? 'text-red-600' : 'text-gray-900'}`}>
+                    {item.current_stock}
+                  </span>
+                  <span className="text-sm text-gray-500 ml-1">{item.unit}</span>
+                </div>
+              </div>
+              
+              <div className="text-right">
+                <p className="text-sm text-gray-600 font-medium">Stock mínimo:</p>
+                <p className="text-lg font-bold text-gray-900">{item.minimum_stock} <span className="text-sm text-gray-500">{item.unit}</span></p>
+              </div>
+            </div>
+            
+            {item.description && (
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <p className="text-sm text-gray-600">{item.description}</p>
+              </div>
+            )}
+            
+            <div className="mt-4 border-t border-gray-200 pt-4 flex justify-between text-sm text-gray-500">
+              {item.location && (
+                <p><span className="font-medium">Ubicación:</span> {item.location}</p>
+              )}
+              
+              {item.supplier_id && (
+                <p><span className="font-medium">Proveedor:</span> {item.supplier_id}</p>
+              )}
+            </div>
+          </div>
+        ))}
+        
+        {filteredItems.length === 0 && (
+          <div className="col-span-full p-6 text-center text-gray-500 bg-white rounded-lg shadow">
+            <svg xmlns="http://www.w3.org/2000/svg" className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+            </svg>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">No hay ítems</h3>
+            <p className="mt-1 text-sm text-gray-500">
+              No se encontraron ítems de inventario que coincidan con los filtros seleccionados.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// Login Component
+function Login({ onLogin }) {
+  const [credentials, setCredentials] = useState({
+    username: '',
+    password: '',
+  });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+    
+    try {
+      onLogin(credentials);
+    } catch (error) {
+      setError('Credenciales incorrectas. Por favor, inténtelo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Sistema de Gestión de Trabajo
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Ingrese sus credenciales para acceder
+          </p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
+            <div>
+              <label htmlFor="username" className="sr-only">Usuario</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                value={credentials.username}
+                onChange={handleChange}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Usuario"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="sr-only">Contraseña</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="current-password"
+                required
+                value={credentials.password}
+                onChange={handleChange}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Contraseña"
+              />
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">
+                    {error}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {isLoading ? (
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </span>
+              ) : (
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <svg className="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                </span>
+              )}
+              Iniciar Sesión
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
+// Register Component
+function Register({ onRegister, onCancelRegister }) {
+  const [userData, setUserData] = useState({
+    username: '',
+    password: '',
+    email: '',
+    full_name: '',
+    role: 'technician',
+  });
+  const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setUserData(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError('');
+    setIsLoading(true);
+    
+    try {
+      onRegister(userData);
+    } catch (error) {
+      setError('No se pudo registrar el usuario. Por favor, inténtelo de nuevo.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Registrar Nuevo Usuario
+          </h2>
+          <p className="mt-2 text-center text-sm text-gray-600">
+            Complete el formulario para crear una nueva cuenta
+          </p>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm space-y-4">
+            <div>
+              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">Nombre Completo</label>
+              <input
+                id="full_name"
+                name="full_name"
+                type="text"
+                required
+                value={userData.full_name}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Nombre completo"
+              />
+            </div>
+            <div>
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700">Usuario</label>
+              <input
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username"
+                required
+                value={userData.username}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Usuario"
+              />
+            </div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                value={userData.email}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="correo@ejemplo.com"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={userData.password}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Contraseña"
+              />
+            </div>
+            <div>
+              <label htmlFor="role" className="block text-sm font-medium text-gray-700">Rol</label>
+              <select
+                id="role"
+                name="role"
+                required
+                value={userData.role}
+                onChange={handleChange}
+                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+              >
+                <option value="admin">Administrador</option>
+                <option value="manager">Gerente</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="technician">Técnico</option>
+                <option value="viewer">Visualizador</option>
+              </select>
+            </div>
+          </div>
+
+          {error && (
+            <div className="rounded-md bg-red-50 p-4">
+              <div className="flex">
+                <div className="flex-shrink-0">
+                  <ExclamationTriangleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
+                </div>
+                <div className="ml-3">
+                  <h3 className="text-sm font-medium text-red-800">
+                    {error}
+                  </h3>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-4">
+            <button
+              type="button"
+              onClick={onCancelRegister}
+              className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              {isLoading ? 'Registrando...' : 'Registrar'}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 // Main App Component
 export default function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
