@@ -147,6 +147,11 @@ def main():
     # Test health check
     tester.test_health_check()
     
+    # Test authentication
+    login_success = tester.test_login(username="admin", password="admin123")
+    if login_success:
+        user_success, user_data = tester.test_get_current_user()
+    
     # Test dashboard
     dashboard_success, dashboard_data = tester.test_get_dashboard()
     
@@ -159,6 +164,39 @@ def main():
     # Test invoices
     invoices_success, invoices_data = tester.test_get_invoices()
     
+    # Test resources
+    resources_success, resources_data = tester.test_get_resources()
+    
+    # Create a test resource if none exist
+    if resources_success and len(resources_data) == 0:
+        test_resource = {
+            "name": "Test Resource",
+            "type": "personnel",
+            "status": "available",
+            "description": "Test resource created by automated test",
+            "identification": "TEST-ID-123",
+            "hourly_cost": 25.0,
+            "specialties": ["Testing", "Automation"]
+        }
+        resource_create_success, new_resource = tester.test_create_resource(test_resource)
+    
+    # Test inventory
+    inventory_success, inventory_data = tester.test_get_inventory()
+    
+    # Create a test inventory item if none exist
+    if inventory_success and len(inventory_data) == 0:
+        test_item = {
+            "name": "Test Item",
+            "category": "material",
+            "description": "Test item created by automated test",
+            "unit": "unidad",
+            "unit_cost": 15.0,
+            "minimum_stock": 5,
+            "current_stock": 10,
+            "location": "Test Location"
+        }
+        item_create_success, new_item = tester.test_create_inventory_item(test_item)
+    
     # Print results
     print("\n=== Test Results ===")
     print(f"Tests passed: {tester.tests_passed}/{tester.tests_run}")
@@ -170,18 +208,28 @@ def main():
     # Print data summary
     if clients_success and clients_data:
         print(f"\nClients found: {len(clients_data)}")
-        for client in clients_data:
+        for client in clients_data[:3]:  # Show only first 3 for brevity
             print(f"- {client.get('name')} (ID: {client.get('id')})")
     
     if work_orders_success and work_orders_data:
         print(f"\nWork Orders found: {len(work_orders_data)}")
-        for wo in work_orders_data:
+        for wo in work_orders_data[:3]:  # Show only first 3 for brevity
             print(f"- {wo.get('title')} (Status: {wo.get('status')})")
     
     if invoices_success and invoices_data:
         print(f"\nInvoices found: {len(invoices_data)}")
-        for invoice in invoices_data:
+        for invoice in invoices_data[:3]:  # Show only first 3 for brevity
             print(f"- {invoice.get('invoice_number')} (Total: ${invoice.get('total_amount')})")
+    
+    if resources_success and resources_data:
+        print(f"\nResources found: {len(resources_data)}")
+        for resource in resources_data[:3]:  # Show only first 3 for brevity
+            print(f"- {resource.get('name')} (Type: {resource.get('type')}, Status: {resource.get('status')})")
+    
+    if inventory_success and inventory_data:
+        print(f"\nInventory Items found: {len(inventory_data)}")
+        for item in inventory_data[:3]:  # Show only first 3 for brevity
+            print(f"- {item.get('name')} (Category: {item.get('category')}, Stock: {item.get('current_stock')})")
     
     return 0 if tester.tests_passed == tester.tests_run else 1
 
