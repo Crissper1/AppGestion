@@ -2888,6 +2888,46 @@ export default function App() {
     }
   };
 
+  // Create a new resource
+  const handleCreateResource = async (resourceData) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/resources`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(resourceData),
+      });
+      
+      if (response.ok) {
+        const newResource = await response.json();
+        setResources(prevResources => [...prevResources, newResource]);
+      }
+    } catch (error) {
+      console.error('Error creating resource:', error);
+    }
+  };
+
+  // Create a new inventory item
+  const handleCreateInventoryItem = async (itemData) => {
+    try {
+      const response = await fetch(`${backendUrl}/api/inventory`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(itemData),
+      });
+      
+      if (response.ok) {
+        const newItem = await response.json();
+        setInventory(prevInventory => [...prevInventory, newItem]);
+      }
+    } catch (error) {
+      console.error('Error creating inventory item:', error);
+    }
+  };
+
   return (
     <div className="app-container">
       <Transition.Root show={sidebarOpen} as={Fragment}>
