@@ -2604,6 +2604,9 @@ export default function App() {
   const [invoices, setInvoices] = useState([]);
   const [resources, setResources] = useState([]);
 
+  // Get the backend URL from environment variables
+  const backendUrl = process.env.REACT_APP_BACKEND_URL;
+
   // Create a new resource
   const handleCreateResource = async (resourceData) => {
     try {
