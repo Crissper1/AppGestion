@@ -2936,7 +2936,6 @@ export default function App() {
     }
   };
 
-  return (
 // Return part starts here
   return (
     <div className="app-container">
