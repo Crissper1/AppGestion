@@ -2317,7 +2317,7 @@ function Inventory({ inventory, onCreateInventoryItem }) {
 }
 
 // Login Component
-function Login({ onLogin }) {
+function Login({ onLogin, onShowRegister }) {
   const [credentials, setCredentials] = useState({
     username: '',
     password: '',
@@ -2336,7 +2336,7 @@ function Login({ onLogin }) {
     setIsLoading(true);
     
     try {
-      onLogin(credentials);
+      await onLogin(credentials);
     } catch (error) {
       setError('Credenciales incorrectas. Por favor, inténtelo de nuevo.');
     } finally {
@@ -2402,7 +2402,7 @@ function Login({ onLogin }) {
             </div>
           )}
 
-          <div>
+          <div className="flex flex-col space-y-3">
             <button
               type="submit"
               disabled={isLoading}
@@ -2423,6 +2423,14 @@ function Login({ onLogin }) {
                 </span>
               )}
               Iniciar Sesión
+            </button>
+            
+            <button
+              type="button"
+              onClick={onShowRegister}
+              className="text-center text-sm text-blue-600 hover:text-blue-800"
+            >
+              ¿No tiene una cuenta? Regístrese aquí
             </button>
           </div>
         </form>
