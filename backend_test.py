@@ -137,16 +137,49 @@ class WorkManagementAPITester:
         self.test_results["create_inventory_item"] = success
         return success, response
         
-    def test_health_check(self):
-        """Test API health check endpoint"""
+    def test_get_dashboard(self):
+        """Test dashboard stats endpoint"""
         success, response = self.run_test(
-            "API Health Check",
+            "Dashboard Stats",
             "GET",
-            "api/health",
+            "api/dashboard",
             200
         )
-        self.test_results["health_check"] = success
-        return success
+        self.test_results["dashboard"] = success
+        return success, response
+
+    def test_get_clients(self):
+        """Test clients endpoint"""
+        success, response = self.run_test(
+            "Get Clients",
+            "GET",
+            "api/clients",
+            200
+        )
+        self.test_results["get_clients"] = success
+        return success, response
+
+    def test_get_work_orders(self):
+        """Test work orders endpoint"""
+        success, response = self.run_test(
+            "Get Work Orders",
+            "GET",
+            "api/work-orders",
+            200
+        )
+        self.test_results["get_work_orders"] = success
+        return success, response
+
+    def test_get_invoices(self):
+        """Test invoices endpoint"""
+        success, response = self.run_test(
+            "Get Invoices",
+            "GET",
+            "api/invoices",
+            200
+        )
+        self.test_results["get_invoices"] = success
+        return success, response
 
 def main():
     # Setup
