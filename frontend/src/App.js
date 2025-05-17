@@ -2930,7 +2930,21 @@ export default function App() {
 
   return (
     <div className="app-container">
-      <Transition.Root show={sidebarOpen} as={Fragment}>
+      {!isAuthenticated ? (
+        showRegister ? (
+          <Register 
+            onRegister={handleRegister} 
+            onCancelRegister={() => setShowRegister(false)} 
+          />
+        ) : (
+          <Login 
+            onLogin={handleLogin} 
+            onShowRegister={() => setShowRegister(true)} 
+          />
+        )
+      ) : (
+        <>
+          <Transition.Root show={sidebarOpen} as={Fragment}>
         <Dialog as="div" className="relative z-40 md:hidden" onClose={setSidebarOpen}>
           <Transition.Child
             as={Fragment}
