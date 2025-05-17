@@ -82,7 +82,7 @@ class WorkOrderBase(BaseModel):
     description: str
     client_id: str
     status: WorkOrderStatus = WorkOrderStatus.pending
-    scheduled_date: Optional[date] = None
+    scheduled_date: Optional[datetime] = None
     location: Optional[str] = None
     priority: Optional[int] = 3  # 1-5 scale, 5 being highest
     estimated_hours: Optional[float] = None
