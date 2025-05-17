@@ -9,11 +9,16 @@ class WorkManagementAPITester:
         self.tests_run = 0
         self.tests_passed = 0
         self.test_results = {}
+        self.token = None
 
-    def run_test(self, name, method, endpoint, expected_status, data=None):
+    def run_test(self, name, method, endpoint, expected_status, data=None, auth=False):
         """Run a single API test"""
         url = f"{self.base_url}/{endpoint}"
         headers = {'Content-Type': 'application/json'}
+        
+        # Add authorization header if token is available and auth is required
+        if auth and self.token:
+            headers['Authorization'] = f'Bearer {self.token}'
         
         self.tests_run += 1
         print(f"\n🔍 Testing {name}...")
