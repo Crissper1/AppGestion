@@ -51,59 +51,90 @@ class WorkManagementAPITester:
             print(f"❌ Failed - Error: {str(e)}")
             return False, None
 
-    def test_health_check(self):
-        """Test API health check endpoint"""
+    def test_login(self, username="admin", password="admin123"):
+        """Test login endpoint"""
+        data = {
+            "username": username,
+            "password": password
+        }
         success, response = self.run_test(
-            "API Health Check",
-            "GET",
-            "api/health",
-            200
+            "Login",
+            "POST",
+            "api/auth/token",
+            200,
+            data=data
         )
-        self.test_results["health_check"] = success
+        
+        if success and response and "access_token" in response:
+            self.token = response["access_token"]
+            print(f"✅ Successfully obtained authentication token")
+        else:
+            print(f"❌ Failed to obtain authentication token")
+        
+        self.test_results["login"] = success
         return success
 
-    def test_get_dashboard(self):
-        """Test dashboard stats endpoint"""
+    def test_get_current_user(self):
+        """Test get current user endpoint"""
+        if not self.token:
+            print("❌ Cannot test user profile without authentication token")
+            self.test_results["get_current_user"] = False
+            return False, None
+            
         success, response = self.run_test(
-            "Dashboard Stats",
+            "Get Current User",
             "GET",
-            "api/dashboard",
-            200
+            "api/auth/me",
+            200,
+            auth=True
         )
-        self.test_results["dashboard"] = success
+        self.test_results["get_current_user"] = success
         return success, response
 
-    def test_get_clients(self):
-        """Test clients endpoint"""
+    def test_get_resources(self):
+        """Test resources endpoint"""
         success, response = self.run_test(
-            "Get Clients",
+            "Get Resources",
             "GET",
-            "api/clients",
+            "api/resources",
             200
         )
-        self.test_results["get_clients"] = success
+        self.test_results["get_resources"] = success
         return success, response
-
-    def test_get_work_orders(self):
-        """Test work orders endpoint"""
+        
+    def test_create_resource(self, resource_data):
+        """Test creating a resource"""
         success, response = self.run_test(
-            "Get Work Orders",
-            "GET",
-            "api/work-orders",
-            200
+            "Create Resource",
+            "POST",
+            "api/resources",
+            200,
+            data=resource_data
         )
-        self.test_results["get_work_orders"] = success
+        self.test_results["create_resource"] = success
         return success, response
-
-    def test_get_invoices(self):
-        """Test invoices endpoint"""
+        
+    def test_get_inventory(self):
+        """Test inventory endpoint"""
         success, response = self.run_test(
-            "Get Invoices",
+            "Get Inventory",
             "GET",
-            "api/invoices",
+            "api/inventory",
             200
         )
-        self.test_results["get_invoices"] = success
+        self.test_results["get_inventory"] = success
+        return success, response
+        
+    def test_create_inventory_item(self, item_data):
+        """Test creating an inventory item"""
+        success, response = self.run_test(
+            "Create Inventory Item",
+            "POST",
+            "api/inventory",
+            200,
+            data=item_data
+        )
+        self.test_results["create_inventory_item"] = success
         return success, response
 
 def main():
