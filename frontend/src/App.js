@@ -291,15 +291,14 @@ function WorkOrderForm({ onSubmit, clients }) {
     e.preventDefault();
     onSubmit(workOrder);
   };
-
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nueva Orden de Trabajo</h3>
+    <div className="form-container">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-6">Nueva Orden de Trabajo</h3>
       
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div className="col-span-2">
-            <label htmlFor="title" className="block text-sm font-medium text-gray-700">
+        <div className="form-grid form-grid-cols-2">
+          <div className="form-group form-group-full">
+            <label htmlFor="title" className="form-label required">
               Título
             </label>
             <input
@@ -309,27 +308,27 @@ function WorkOrderForm({ onSubmit, clients }) {
               required
               value={workOrder.title}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Ingrese el título de la orden de trabajo"
             />
           </div>
 
-          <div className="col-span-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="description" className="form-label required">
               Descripción
             </label>
             <textarea
               id="description"
               name="description"
-              rows={3}
+              rows={4}
               required
               value={workOrder.description}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-textarea"
+              placeholder="Describa detalladamente el trabajo a realizar"
             />
-          </div>
-
-          <div>
-            <label htmlFor="client_id" className="block text-sm font-medium text-gray-700">
+          </div>          <div className="form-group">
+            <label htmlFor="client_id" className="form-label required">
               Cliente
             </label>
             <select
@@ -338,7 +337,7 @@ function WorkOrderForm({ onSubmit, clients }) {
               required
               value={workOrder.client_id}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="">Seleccione un cliente</option>
               {clients.map((client) => (
@@ -349,8 +348,8 @@ function WorkOrderForm({ onSubmit, clients }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="status" className="form-label">
               Estado
             </label>
             <select
@@ -358,7 +357,7 @@ function WorkOrderForm({ onSubmit, clients }) {
               name="status"
               value={workOrder.status}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="pending">Pendiente</option>
               <option value="in_progress">En Progreso</option>
@@ -367,8 +366,8 @@ function WorkOrderForm({ onSubmit, clients }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="scheduled_date" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="scheduled_date" className="form-label">
               Fecha Programada
             </label>
             <DatePicker
@@ -376,12 +375,13 @@ function WorkOrderForm({ onSubmit, clients }) {
               selected={workOrder.scheduled_date}
               onChange={handleDateChange}
               dateFormat="dd/MM/yyyy"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholderText="Seleccione una fecha"
             />
           </div>
 
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="location" className="form-label">
               Ubicación
             </label>
             <input
@@ -390,12 +390,11 @@ function WorkOrderForm({ onSubmit, clients }) {
               id="location"
               value={workOrder.location}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Dirección o ubicación del trabajo"
             />
-          </div>
-
-          <div>
-            <label htmlFor="priority" className="block text-sm font-medium text-gray-700">
+          </div>          <div className="form-group">
+            <label htmlFor="priority" className="form-label">
               Prioridad
             </label>
             <select
@@ -403,7 +402,7 @@ function WorkOrderForm({ onSubmit, clients }) {
               name="priority"
               value={workOrder.priority}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="1">Baja (1)</option>
               <option value="2">Baja (2)</option>
@@ -413,8 +412,8 @@ function WorkOrderForm({ onSubmit, clients }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="estimated_hours" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="estimated_hours" className="form-label">
               Horas Estimadas
             </label>
             <input
@@ -425,15 +424,16 @@ function WorkOrderForm({ onSubmit, clients }) {
               step="0.5"
               value={workOrder.estimated_hours}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="0.0"
             />
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
           >
             Crear Orden de Trabajo
           </button>
@@ -731,15 +731,14 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
       }))
     });
   };
-
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nuevo Comprobante Fiscal Electrónico (CFE)</h3>
+    <div className="form-container">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-6">Nuevo Comprobante Fiscal Electrónico (CFE)</h3>
       
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="client_id" className="block text-sm font-medium text-gray-700">
+        <div className="form-grid form-grid-cols-2">
+          <div className="form-group">
+            <label htmlFor="client_id" className="form-label required">
               Cliente
             </label>
             <select
@@ -748,7 +747,7 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
               required
               value={invoice.client_id}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="">Seleccione un cliente</option>
               {clients.map((client) => (
@@ -759,8 +758,8 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="invoice_type" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="invoice_type" className="form-label required">
               Tipo de Comprobante
             </label>
             <select
@@ -768,7 +767,7 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
               name="invoice_type"
               value={invoice.invoice_type}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="e-Ticket">e-Ticket</option>
               <option value="e-Factura">e-Factura</option>
@@ -777,8 +776,8 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="issue_date" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="issue_date" className="form-label required">
               Fecha de Emisión
             </label>
             <DatePicker
@@ -786,12 +785,13 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
               selected={invoice.issue_date}
               onChange={(date) => handleDateChange('issue_date', date)}
               dateFormat="dd/MM/yyyy"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholderText="Seleccione la fecha de emisión"
             />
           </div>
 
-          <div>
-            <label htmlFor="due_date" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="due_date" className="form-label">
               Fecha de Vencimiento
             </label>
             <DatePicker
@@ -799,12 +799,13 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
               selected={invoice.due_date}
               onChange={(date) => handleDateChange('due_date', date)}
               dateFormat="dd/MM/yyyy"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholderText="Seleccione la fecha de vencimiento"
             />
           </div>
 
-          <div>
-            <label htmlFor="payment_terms" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="payment_terms" className="form-label">
               Condiciones de Pago
             </label>
             <input
@@ -813,17 +814,16 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
               id="payment_terms"
               value={invoice.payment_terms}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Ej: Contado, 30 días, etc."
             />
           </div>
-        </div>
-
-        {invoice.client_id && selectedWorkOrders.length > 0 && (
+        </div>        {invoice.client_id && selectedWorkOrders.length > 0 && (
           <div className="mt-6">
-            <h4 className="text-sm font-medium text-gray-700 mb-2">Órdenes de Trabajo Disponibles</h4>
-            <div className="bg-gray-50 p-4 rounded-md">
+            <h4 className="text-sm font-medium text-gray-700 mb-4">Órdenes de Trabajo Disponibles</h4>
+            <div className="bg-gray-50 p-4 rounded-md border border-gray-200">
               {selectedWorkOrders.map((wo) => (
-                <div key={wo.id} className="flex items-center mb-2">
+                <div key={wo.id} className="flex items-center mb-3 last:mb-0">
                   <input
                     type="checkbox"
                     id={`wo-${wo.id}`}
@@ -831,22 +831,20 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
                     onChange={(e) => handleWorkOrderSelection(e, wo.id)}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label htmlFor={`wo-${wo.id}`} className="ml-2 block text-sm text-gray-900">
+                  <label htmlFor={`wo-${wo.id}`} className="ml-3 block text-sm text-gray-900">
                     {wo.title} - {wo.status === 'completed' ? 'Completada' : 'En progreso'}
                   </label>
                 </div>
               ))}
             </div>
           </div>
-        )}
-
-        <div className="mt-6">
-          <h4 className="text-sm font-medium text-gray-700 mb-2">Detalles de Ítems</h4>
+        )}        <div className="mt-6">
+          <h4 className="text-sm font-medium text-gray-700 mb-4">Detalles de Ítems</h4>
           {invoice.items.map((item, index) => (
-            <div key={index} className="mb-4 bg-gray-50 p-4 rounded-md">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label htmlFor={`item-desc-${index}`} className="block text-xs font-medium text-gray-700">
+            <div key={index} className="mb-6 bg-gray-50 p-4 rounded-md border border-gray-200">
+              <div className="form-grid form-grid-cols-2">
+                <div className="form-group form-group-full">
+                  <label htmlFor={`item-desc-${index}`} className="form-label required">
                     Descripción
                   </label>
                   <input
@@ -855,11 +853,13 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
                     value={item.description}
                     onChange={(e) => handleItemChange(index, 'description', e.target.value)}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-xs"
+                    className="form-input"
+                    placeholder="Descripción del producto o servicio"
                   />
                 </div>
-                <div>
-                  <label htmlFor={`item-qty-${index}`} className="block text-xs font-medium text-gray-700">
+                
+                <div className="form-group">
+                  <label htmlFor={`item-qty-${index}`} className="form-label required">
                     Cantidad
                   </label>
                   <input
@@ -870,12 +870,14 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
                     required
                     min="0.01"
                     step="0.01"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-xs"
+                    className="form-input"
+                    placeholder="1.00"
                   />
                 </div>
-                <div>
-                  <label htmlFor={`item-price-${index}`} className="block text-xs font-medium text-gray-700">
-                    Precio Unitario
+                
+                <div className="form-group">
+                  <label htmlFor={`item-price-${index}`} className="form-label required">
+                    Precio Unitario (UYU)
                   </label>
                   <input
                     type="number"
@@ -885,80 +887,88 @@ function InvoiceForm({ onSubmit, clients, workOrders }) {
                     required
                     min="0"
                     step="0.01"
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-xs"
+                    className="form-input"
+                    placeholder="0.00"
                   />
                 </div>
-                <div>
-                  <label htmlFor={`item-tax-${index}`} className="block text-xs font-medium text-gray-700">
+                
+                <div className="form-group">
+                  <label htmlFor={`item-tax-${index}`} className="form-label required">
                     IVA (%)
                   </label>
                   <select
                     id={`item-tax-${index}`}
                     value={item.tax_rate}
                     onChange={(e) => handleItemChange(index, 'tax_rate', e.target.value)}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-xs"
+                    className="form-input form-select"
                   >
                     <option value="0">Exento (0%)</option>
                     <option value="10">Tasa Reducida (10%)</option>
                     <option value="22">Tasa Básica (22%)</option>
                   </select>
                 </div>
+                
                 <div className="flex items-end">
                   <button
                     type="button"
                     onClick={() => removeItem(index)}
-                    className="text-red-600 hover:text-red-900"
+                    className="inline-flex items-center px-3 py-2 border border-red-300 shadow-sm text-sm font-medium rounded-md text-red-700 bg-white hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                     disabled={invoice.items.length === 1}
                   >
-                    <XMarkIcon className="h-5 w-5" />
+                    <XMarkIcon className="h-4 w-4" />
+                    Eliminar
                   </button>
                 </div>
               </div>
             </div>
-          ))}
-          
+          ))}          
           <button
             type="button"
             onClick={addItem}
-            className="mt-2 inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="mt-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Agregar Ítem
           </button>
         </div>
 
         <div className="mt-6">
-          <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-            Notas
-          </label>
-          <textarea
-            id="notes"
-            name="notes"
-            rows={3}
-            value={invoice.notes}
-            onChange={handleChange}
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-          />
-        </div>
-
-        <div className="mt-6 bg-gray-50 p-4 rounded-md">
-          <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-500">Subtotal:</span>
-            <span className="text-sm font-medium">$ {calculateSubtotal().toFixed(2)} UYU</span>
-          </div>
-          <div className="flex justify-between mb-2">
-            <span className="text-sm text-gray-500">IVA:</span>
-            <span className="text-sm font-medium">$ {calculateTax().toFixed(2)} UYU</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-sm font-medium">Total:</span>
-            <span className="text-sm font-bold">$ {calculateTotal().toFixed(2)} UYU</span>
+          <div className="form-group">
+            <label htmlFor="notes" className="form-label">
+              Notas
+            </label>
+            <textarea
+              id="notes"
+              name="notes"
+              rows={3}
+              value={invoice.notes}
+              onChange={handleChange}
+              className="form-input form-textarea"
+              placeholder="Observaciones o comentarios adicionales"
+            />
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 bg-gray-50 p-4 rounded-md border border-gray-200">
+          <div className="space-y-2">
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">Subtotal:</span>
+              <span className="text-sm font-medium">$ {calculateSubtotal().toFixed(2)} UYU</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-sm text-gray-600">IVA:</span>
+              <span className="text-sm font-medium">$ {calculateTax().toFixed(2)} UYU</span>
+            </div>
+            <div className="flex justify-between pt-2 border-t border-gray-200">
+              <span className="text-base font-semibold text-gray-900">Total:</span>
+              <span className="text-base font-bold text-gray-900">$ {calculateTotal().toFixed(2)} UYU</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
           >
             Crear Comprobante
           </button>
@@ -1184,15 +1194,14 @@ function ClientForm({ onSubmit }) {
     e.preventDefault();
     onSubmit(client);
   };
-
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nuevo Cliente</h3>
+    <div className="form-container">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-6">Nuevo Cliente</h3>
       
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <div className="form-grid form-grid-cols-2">
+          <div className="form-group">
+            <label htmlFor="name" className="form-label required">
               Nombre Comercial
             </label>
             <input
@@ -1202,12 +1211,13 @@ function ClientForm({ onSubmit }) {
               required
               value={client.name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Nombre del cliente"
             />
           </div>
 
-          <div>
-            <label htmlFor="rut" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="rut" className="form-label required">
               RUT
             </label>
             <input
@@ -1217,12 +1227,13 @@ function ClientForm({ onSubmit }) {
               required
               value={client.rut}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="12.345.678-9"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="business_name" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="business_name" className="form-label required">
               Razón Social
             </label>
             <input
@@ -1232,12 +1243,13 @@ function ClientForm({ onSubmit }) {
               required
               value={client.business_name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Razón social completa"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="address" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="address" className="form-label required">
               Dirección Fiscal
             </label>
             <input
@@ -1247,12 +1259,11 @@ function ClientForm({ onSubmit }) {
               required
               value={client.address}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Dirección completa"
             />
-          </div>
-
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium text-gray-700">
+          </div>          <div className="form-group">
+            <label htmlFor="email" className="form-label">
               Email
             </label>
             <input
@@ -1261,12 +1272,13 @@ function ClientForm({ onSubmit }) {
               id="email"
               value={client.email}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="correo@ejemplo.com"
             />
           </div>
 
-          <div>
-            <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="phone" className="form-label">
               Teléfono
             </label>
             <input
@@ -1275,12 +1287,13 @@ function ClientForm({ onSubmit }) {
               id="phone"
               value={client.phone}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="+598 99 123 456"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="contact_person" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="contact_person" className="form-label">
               Persona de Contacto
             </label>
             <input
@@ -1289,15 +1302,16 @@ function ClientForm({ onSubmit }) {
               id="contact_person"
               value={client.contact_person}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Nombre del contacto principal"
             />
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
           >
             Crear Cliente
           </button>
@@ -1526,15 +1540,14 @@ function ResourceForm({ onSubmit }) {
       hourly_cost: parseFloat(resource.hourly_cost)
     });
   };
-
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nuevo Recurso</h3>
+    <div className="form-container">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-6">Nuevo Recurso</h3>
       
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <div className="form-grid form-grid-cols-2">
+          <div className="form-group">
+            <label htmlFor="name" className="form-label required">
               Nombre
             </label>
             <input
@@ -1544,12 +1557,13 @@ function ResourceForm({ onSubmit }) {
               required
               value={resource.name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Nombre del recurso"
             />
           </div>
 
-          <div>
-            <label htmlFor="type" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="type" className="form-label required">
               Tipo
             </label>
             <select
@@ -1558,7 +1572,7 @@ function ResourceForm({ onSubmit }) {
               required
               value={resource.type}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="personnel">Personal</option>
               <option value="vehicle">Vehículo</option>
@@ -1566,8 +1580,8 @@ function ResourceForm({ onSubmit }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="status" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="status" className="form-label">
               Estado
             </label>
             <select
@@ -1575,17 +1589,15 @@ function ResourceForm({ onSubmit }) {
               name="status"
               value={resource.status}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="available">Disponible</option>
               <option value="assigned">Asignado</option>
               <option value="maintenance">En mantenimiento</option>
               <option value="unavailable">No disponible</option>
             </select>
-          </div>
-
-          <div>
-            <label htmlFor="identification" className="block text-sm font-medium text-gray-700">
+          </div>          <div className="form-group">
+            <label htmlFor="identification" className="form-label">
               Identificación
             </label>
             <input
@@ -1594,14 +1606,14 @@ function ResourceForm({ onSubmit }) {
               id="identification"
               value={resource.identification}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
               placeholder={resource.type === 'personnel' ? 'Cédula/ID' : 
                          resource.type === 'vehicle' ? 'Placa/Matrícula' : 'Número de Serie'}
             />
           </div>
 
-          <div>
-            <label htmlFor="hourly_cost" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="hourly_cost" className="form-label">
               Costo por Hora (UYU)
             </label>
             <input
@@ -1612,12 +1624,13 @@ function ResourceForm({ onSubmit }) {
               step="0.01"
               value={resource.hourly_cost}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="0.00"
             />
           </div>
 
-          <div>
-            <label htmlFor="specialties" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="specialties" className="form-label">
               Especialidades
             </label>
             <input
@@ -1627,26 +1640,27 @@ function ResourceForm({ onSubmit }) {
               value={resource.specialties}
               onChange={handleChange}
               placeholder="Separadas por comas"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="description" className="form-label">
               Descripción
             </label>
             <textarea
               id="description"
               name="description"
-              rows={2}
+              rows={3}
               value={resource.description}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-textarea"
+              placeholder="Descripción detallada del recurso"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="notes" className="form-label">
               Notas
             </label>
             <textarea
@@ -1655,15 +1669,16 @@ function ResourceForm({ onSubmit }) {
               rows={2}
               value={resource.notes}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-textarea"
+              placeholder="Notas adicionales"
             />
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
           >
             Crear Recurso
           </button>
@@ -1929,15 +1944,14 @@ function InventoryForm({ onSubmit }) {
       current_stock: parseInt(item.current_stock)
     });
   };
-
   return (
-    <div className="bg-white shadow sm:rounded-lg p-6">
-      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-4">Nuevo Ítem de Inventario</h3>
+    <div className="form-container">
+      <h3 className="text-lg font-medium leading-6 text-gray-900 mb-6">Nuevo Ítem de Inventario</h3>
       
       <form onSubmit={handleSubmit}>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-700">
+        <div className="form-grid form-grid-cols-2">
+          <div className="form-group">
+            <label htmlFor="name" className="form-label required">
               Nombre
             </label>
             <input
@@ -1947,12 +1961,13 @@ function InventoryForm({ onSubmit }) {
               required
               value={item.name}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Nombre del ítem"
             />
           </div>
 
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="category" className="form-label required">
               Categoría
             </label>
             <select
@@ -1961,7 +1976,7 @@ function InventoryForm({ onSubmit }) {
               required
               value={item.category}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-select"
             >
               <option value="material">Material</option>
               <option value="tool">Herramienta</option>
@@ -1970,8 +1985,8 @@ function InventoryForm({ onSubmit }) {
             </select>
           </div>
 
-          <div>
-            <label htmlFor="unit" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="unit" className="form-label required">
               Unidad de Medida
             </label>
             <input
@@ -1981,12 +1996,11 @@ function InventoryForm({ onSubmit }) {
               required
               value={item.unit}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="unidad, metro, litro, etc."
             />
-          </div>
-
-          <div>
-            <label htmlFor="unit_cost" className="block text-sm font-medium text-gray-700">
+          </div>          <div className="form-group">
+            <label htmlFor="unit_cost" className="form-label required">
               Costo Unitario (UYU)
             </label>
             <input
@@ -1998,12 +2012,13 @@ function InventoryForm({ onSubmit }) {
               required
               value={item.unit_cost}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="0.00"
             />
           </div>
 
-          <div>
-            <label htmlFor="current_stock" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="current_stock" className="form-label required">
               Stock Actual
             </label>
             <input
@@ -2014,12 +2029,13 @@ function InventoryForm({ onSubmit }) {
               required
               value={item.current_stock}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="0"
             />
           </div>
 
-          <div>
-            <label htmlFor="minimum_stock" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="minimum_stock" className="form-label required">
               Stock Mínimo
             </label>
             <input
@@ -2029,12 +2045,13 @@ function InventoryForm({ onSubmit }) {
               min="0"
               value={item.minimum_stock}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="0"
             />
           </div>
 
-          <div>
-            <label htmlFor="location" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="location" className="form-label">
               Ubicación
             </label>
             <input
@@ -2043,12 +2060,13 @@ function InventoryForm({ onSubmit }) {
               id="location"
               value={item.location}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Depósito, estante, etc."
             />
           </div>
 
-          <div>
-            <label htmlFor="supplier_id" className="block text-sm font-medium text-gray-700">
+          <div className="form-group">
+            <label htmlFor="supplier_id" className="form-label">
               Proveedor
             </label>
             <input
@@ -2057,26 +2075,28 @@ function InventoryForm({ onSubmit }) {
               id="supplier_id"
               value={item.supplier_id}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="Nombre del proveedor"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="description" className="form-label">
               Descripción
             </label>
             <textarea
               id="description"
               name="description"
-              rows={2}
+              rows={3}
               value={item.description}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input form-textarea"
+              placeholder="Descripción detallada del ítem"
             />
           </div>
 
-          <div className="sm:col-span-2">
-            <label htmlFor="image_url" className="block text-sm font-medium text-gray-700">
+          <div className="form-group form-group-full">
+            <label htmlFor="image_url" className="form-label">
               URL de Imagen (opcional)
             </label>
             <input
@@ -2085,15 +2105,16 @@ function InventoryForm({ onSubmit }) {
               id="image_url"
               value={item.image_url}
               onChange={handleChange}
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+              className="form-input"
+              placeholder="https://ejemplo.com/imagen.jpg"
             />
           </div>
         </div>
 
-        <div className="mt-6">
+        <div className="mt-8 pt-4 border-t border-gray-200">
           <button
             type="submit"
-            className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full sm:w-auto inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
           >
             Crear Ítem
           </button>
@@ -2343,52 +2364,52 @@ function Login({ onLogin, onShowRegister }) {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sistema de Gestión de Trabajo
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Ingrese sus credenciales para acceder
-          </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm -space-y-px">
-            <div>
-              <label htmlFor="username" className="sr-only">Usuario</label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                required
-                value={credentials.username}
-                onChange={handleChange}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Usuario"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="sr-only">Contraseña</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={credentials.password}
-                onChange={handleChange}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Contraseña"
-              />
-            </div>
+      <div className="max-w-md w-full">
+        <div className="form-container">
+          <div className="text-center mb-8">
+            <h2 className="text-3xl font-extrabold text-gray-900">
+              Sistema de Gestión de Trabajo
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Ingrese sus credenciales para acceder
+            </p>
           </div>
-
-          {error && (
-            <div className="rounded-md bg-red-50 p-4">
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid form-grid-cols-1">
+              <div className="form-group">
+                <label htmlFor="username" className="form-label required">Usuario</label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
+                  required
+                  value={credentials.username}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Ingrese su usuario"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="password" className="form-label required">Contraseña</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                  value={credentials.password}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Ingrese su contraseña"
+                />
+              </div>
+            </div>          {error && (
+            <div className="rounded-md bg-red-50 p-4 border border-red-200">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <ExclamationTriangleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
@@ -2402,38 +2423,35 @@ function Login({ onLogin, onShowRegister }) {
             </div>
           )}
 
-          <div className="flex flex-col space-y-3">
+          <div className="mt-8 pt-4 border-t border-gray-200 space-y-4">
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
             >
               {isLoading ? (
-                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <span className="flex items-center">
+                  <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
+                  Iniciando sesión...
                 </span>
               ) : (
-                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                  <svg className="h-5 w-5 text-blue-500 group-hover:text-blue-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                  </svg>
-                </span>
+                'Iniciar Sesión'
               )}
-              Iniciar Sesión
             </button>
             
             <button
               type="button"
               onClick={onShowRegister}
-              className="text-center text-sm text-blue-600 hover:text-blue-800"
+              className="w-full text-center text-sm text-blue-600 hover:text-blue-800 py-2"
             >
               ¿No tiene una cuenta? Regístrese aquí
             </button>
           </div>
         </form>
+        </div>
       </div>
     </div>
   );
@@ -2469,96 +2487,98 @@ function Register({ onRegister, onCancelRegister }) {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+      <div className="max-w-md w-full">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-extrabold text-gray-900">
             Registrar Nuevo Usuario
           </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
+          <p className="mt-2 text-sm text-gray-600">
             Complete el formulario para crear una nueva cuenta
           </p>
-        </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          <div className="rounded-md shadow-sm space-y-4">
-            <div>
-              <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">Nombre Completo</label>
-              <input
-                id="full_name"
-                name="full_name"
-                type="text"
-                required
-                value={userData.full_name}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Nombre completo"
-              />
+        </div><div className="form-container">
+          <form onSubmit={handleSubmit}>
+            <div className="form-grid form-grid-cols-1">
+              <div className="form-group">
+                <label htmlFor="full_name" className="form-label required">Nombre Completo</label>
+                <input
+                  id="full_name"
+                  name="full_name"
+                  type="text"
+                  required
+                  value={userData.full_name}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Ingrese su nombre completo"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="username" className="form-label required">Usuario</label>
+                <input
+                  id="username"
+                  name="username"
+                  type="text"
+                  autoComplete="username"
+                  required
+                  value={userData.username}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Elija un nombre de usuario"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="email" className="form-label required">Email</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={userData.email}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="correo@ejemplo.com"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="password" className="form-label required">Contraseña</label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  value={userData.password}
+                  onChange={handleChange}
+                  className="form-input"
+                  placeholder="Ingrese una contraseña segura"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label htmlFor="role" className="form-label required">Rol</label>
+                <select
+                  id="role"
+                  name="role"
+                  required
+                  value={userData.role}
+                  onChange={handleChange}
+                  className="form-input form-select"
+                >                  <option value="admin">Administrador</option>
+                  <option value="manager">Gerente</option>
+                  <option value="supervisor">Supervisor</option>
+                  <option value="technician">Técnico</option>
+                  <option value="viewer">Visualizador</option>
+                </select>
+              </div>
             </div>
-            <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">Usuario</label>
-              <input
-                id="username"
-                name="username"
-                type="text"
-                autoComplete="username"
-                required
-                value={userData.username}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Usuario"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={userData.email}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="correo@ejemplo.com"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">Contraseña</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                required
-                value={userData.password}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Contraseña"
-              />
-            </div>
-            <div>
-              <label htmlFor="role" className="block text-sm font-medium text-gray-700">Rol</label>
-              <select
-                id="role"
-                name="role"
-                required
-                value={userData.role}
-                onChange={handleChange}
-                className="appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-              >
-                <option value="admin">Administrador</option>
-                <option value="manager">Gerente</option>
-                <option value="supervisor">Supervisor</option>
-                <option value="technician">Técnico</option>
-                <option value="viewer">Visualizador</option>
-              </select>
-            </div>
-          </div>
 
           {error && (
-            <div className="rounded-md bg-red-50 p-4">
+            <div className="rounded-md bg-red-50 p-4 border border-red-200">
               <div className="flex">
                 <div className="flex-shrink-0">
                   <ExclamationTriangleIcon className="h-5 w-5 text-red-400" aria-hidden="true" />
@@ -2572,23 +2592,35 @@ function Register({ onRegister, onCancelRegister }) {
             </div>
           )}
 
-          <div className="flex gap-4">
-            <button
-              type="button"
-              onClick={onCancelRegister}
-              className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              Cancelar
-            </button>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-            >
-              {isLoading ? 'Registrando...' : 'Registrar'}
-            </button>
-          </div>
-        </form>
+          <div className="mt-8 pt-4 border-t border-gray-200 space-y-4">
+            <div className="flex gap-4">
+              <button
+                type="button"
+                onClick={onCancelRegister}
+                className="flex-1 inline-flex justify-center py-3 px-6 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="flex-1 inline-flex justify-center py-3 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+              >
+                {isLoading ? (
+                  <span className="flex items-center">
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Registrando...
+                  </span>
+                ) : (
+                  'Registrar'
+                )}
+              </button>
+            </div>
+          </div>        </form>
+        </div>
       </div>
     </div>
   );
